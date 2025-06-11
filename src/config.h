@@ -23,9 +23,10 @@ extern "C" {
 
 // Radio
 #define RADIO_FREQUENCY           2400.0
-#define RADIO_BANDWIDTH           812.5
-#define RADIO_SPREADING_FACTOR    7
-#define RADIO_OUTPUT_POWER        13
+#define RADIO_BANDWIDTH           1625
+#define RADIO_SPREADING_FACTOR    5
+#define RADIO_OUTPUT_POWER        0
+#define RADIO_CODING_RATE         5 // LORA_CR_4_5
 
 #ifdef __cplusplus
 } // extern "C"

@@ -1,5 +1,5 @@
 /*
- * main.cpp - main rx application file
+ * main.cpp - main file of rx app
  */
 
 #include <config.h>

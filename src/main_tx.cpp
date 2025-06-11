@@ -1,5 +1,5 @@
 /*
- * main_tx.cpp - main tx application file
+ * main_tx.cpp - main file of tx app
  */
 
 #include <config.h>
