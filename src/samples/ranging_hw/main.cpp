@@ -2,7 +2,8 @@
  * main.cpp - main file of master/slave ranging app
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <error.h>
 #include <Arduino.h>
 #include <RadioLib.h>
