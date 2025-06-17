@@ -1,5 +1,5 @@
 /*
- * main_ranging.cpp - main file of master/slave ranging app
+ * main.cpp - main file of master/slave ranging app
  */
 
 #include <config.h>

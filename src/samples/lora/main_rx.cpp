@@ -1,5 +1,5 @@
 /*
- * main.cpp - main file of rx app
+ * main_rx.cpp - main file of rx app
  */
 
 #include <config.h>
@@ -45,23 +45,23 @@ void setup()
 }
 
 void loop() {
-  if (rx_event_flag) {
-    int err;
-    String rx_str;
+    if (rx_event_flag) {
+        int err;
+        String rx_str;
 
-    rx_event_flag = false;
+        rx_event_flag = false;
 
-    err = radio.readData(rx_str);
-    if (err == RADIOLIB_ERR_NONE) {
-        Serial.printf("Received(rssi=%.2fdBm, snr=%.2fdB, freq=%.2fHz): %s\n",
-            radio.getRSSI(), radio.getSNR(), radio.getFrequencyError(), rx_str.c_str());
-    } else {
-        Serial.printf("Receive failed (err = %d) \n", err);
+        err = radio.readData(rx_str);
+        if (err == RADIOLIB_ERR_NONE) {
+            Serial.printf("Received(rssi=%.2fdBm, snr=%.2fdB, freq=%.2fHz): %s\n",
+                radio.getRSSI(), radio.getSNR(), radio.getFrequencyError(), rx_str.c_str());
+        } else {
+            Serial.printf("Receive failed (err = %d) \n", err);
+        }
+
+        err = radio.startReceive();
+        if (err != RADIOLIB_ERR_NONE) {
+            error_event_handler("RX re-start failed", err);
+        }
     }
-
-    err = radio.startReceive();
-    if (err != RADIOLIB_ERR_NONE) {
-        error_event_handler("RX re-start failed", err);
-    }
-  }
 }
