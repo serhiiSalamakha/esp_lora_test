@@ -50,12 +50,6 @@ void setup() {
         error_event_handler("Radio init failed", err);
     }
 
-    radio.setFrequency(RADIO_FREQUENCY);
-    radio.setSpreadingFactor(RADIO_SPREADING_FACTOR);
-    radio.setBandwidth(RADIO_BANDWIDTH);
-    radio.setCodingRate(RADIO_CODING_RATE, false);
-    radio.setOutputPower(RADIO_OUTPUT_POWER);
-
     uint32_t devAddr = (uint32_t)(ESP.getEfuseMac() >> 16);
     Serial.printf("Device address: 0x%x\n", devAddr);
 
@@ -69,11 +63,20 @@ void setup() {
 }
 
 void loop() {
+    int err;
     static bool led_status_on = true;
     static uint32_t cnt;
 
     do {
-        int err = node.sendReceive(NULL, 0, 1, false);
+        // err = node.setDatarate(DR4_SF8_BW125Hz);
+        // err |= node.setTxPower(TX_POWER_VALUE);
+        // if (err != RADIOLIB_ERR_NONE) {
+        //     stripgrb.setPixelColor(0, stripgrb.Color(255, 0, 0)); stripgrb.show();
+        //     Serial.printf("Set configuration failed (err = %d)\n", err);
+        //     break;
+        // }
+
+        err = node.sendReceive(NULL, 0, 1, false);
         if (err != RADIOLIB_ERR_NONE && err != RADIOLIB_ERR_TX_TIMEOUT) {
             stripgrb.setPixelColor(0, stripgrb.Color(255, 0, 0)); stripgrb.show();
             Serial.printf("TX failed (err = %d)\n", err);

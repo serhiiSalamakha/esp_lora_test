@@ -24,12 +24,16 @@ extern "C" {
 // LED TX status (RGB WS2812)
 #define LED_TX_STATUS             23
 
-// Radio
-#define RADIO_FREQUENCY           868.1
-#define RADIO_BANDWIDTH           125.0
-#define RADIO_SPREADING_FACTOR    7
-#define RADIO_CODING_RATE         8 // LORA_CR_4_8
-#define RADIO_OUTPUT_POWER        13
+// Data Rate
+#define DR0_SF12_BW125Hz          0
+#define DR1_SF11_BW125Hz          1
+#define DR2_SF10_BW125Hz          2
+#define DR3_SF9_BW125Hz           3
+#define DR4_SF8_BW125Hz           4
+#define DR5_SF7_BW125Hz           5
+
+// TX power
+#define TX_POWER_VALUE            12
 
 // Lora TDOA commands
 #define CMD_TDOA_BEACON           0x10
