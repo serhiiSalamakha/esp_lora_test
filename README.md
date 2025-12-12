@@ -1,4 +1,4 @@
-# 📡 ESP8285 + SX1280 LoRa Ranging Firmware
+# 📡 **ESP8285 + SX1280** and **ESP32 + LR1121** LoRa TX/RX applications
 
 This project provides firmware for a LoRa-based system using the **ESP8285 + SX1280** and **ESP32 + LR1121**
 
