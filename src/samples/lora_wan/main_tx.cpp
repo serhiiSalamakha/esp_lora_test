@@ -11,14 +11,20 @@
 #include <SPI.h>
 
 #define TX_BUFF_LEN          128
-#define TX_DATA_REPEAT_MS    1000
+#define TX_DATA_REPEAT_MS    2000
 
 #define LED_STATUS_COUNT     8
 #define LED_STATUS_BRIGHT    1
 
 SPIClass spi(VSPI);
 
-LR1121 radio = new Module(SPI_PIN_CS, SPI_PIN_DIO1, SPI_PIN_RESET, SPI_PIN_BUSY, spi);
+#ifdef RF_CHIP_LR1121
+Module mode(SPI_PIN_CS, SPI_PIN_DIO1, SPI_PIN_RESET, SPI_PIN_BUSY, spi);
+LR1121 radio(&mode);
+#elif RF_CHIP_SX1276
+Module mode(SPI_PIN_CS, SPI_PIN_DIO0, SPI_PIN_RESET, SPI_PIN_DIO1, spi);
+SX1276 radio(&mode);
+#endif
 
 Adafruit_NeoPixel stripgrb(LED_STATUS_COUNT, LED_TX_STATUS, NEO_GRB + NEO_KHZ800);
 
@@ -59,6 +65,18 @@ void setup() {
         error_event_handler("LoRaWAN ABP activation failed", err);
     }
 
+#ifdef RF_CHIP_SX1276
+    pinMode(MISC_FAN_EN, OUTPUT);
+    pinMode(POWER_RX_EN, OUTPUT);
+    pinMode(POWER_TX_EN, OUTPUT);
+
+    dacWrite(POWER_APC, 255);
+
+    digitalWrite(MISC_FAN_EN, HIGH);
+    digitalWrite(POWER_RX_EN, LOW);
+    digitalWrite(POWER_TX_EN, HIGH);
+#endif
+
     stripgrb.setPixelColor(0, stripgrb.Color(0, 255, 0)); stripgrb.show();
 }
 
@@ -68,13 +86,13 @@ void loop() {
     static uint32_t cnt;
 
     do {
-        // err = node.setDatarate(DR4_SF8_BW125Hz);
-        // err |= node.setTxPower(TX_POWER_VALUE);
-        // if (err != RADIOLIB_ERR_NONE) {
-        //     stripgrb.setPixelColor(0, stripgrb.Color(255, 0, 0)); stripgrb.show();
-        //     Serial.printf("Set configuration failed (err = %d)\n", err);
-        //     break;
-        // }
+        err = node.setDatarate(DR3_SF9_BW125Hz);
+        err |= node.setTxPower(TX_POWER_VALUE);
+        if (err != RADIOLIB_ERR_NONE) {
+            stripgrb.setPixelColor(0, stripgrb.Color(255, 0, 0)); stripgrb.show();
+            Serial.printf("Set configuration failed (err = %d)\n", err);
+            break;
+        }
 
         err = node.sendReceive(NULL, 0, 1, false);
         if (err != RADIOLIB_ERR_NONE && err != RADIOLIB_ERR_TX_TIMEOUT) {

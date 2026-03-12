@@ -12,6 +12,7 @@ extern "C" {
 // Serial
 #define SERIAL_BAUD_RATE          115200
 
+#ifdef RF_CHIP_LR1121
 // SPI pins for communication with LR1121
 #define SPI_PIN_DIO1              14
 #define SPI_PIN_BUSY              32
@@ -24,6 +25,26 @@ extern "C" {
 // LED TX status (RGB WS2812)
 #define LED_TX_STATUS             23
 
+#elif RF_CHIP_SX1276
+// SPI pins for communication with SX1276
+#define SPI_PIN_DIO0              36
+#define SPI_PIN_DIO1              37
+#define SPI_PIN_MISO              33
+#define SPI_PIN_MOSI              32
+#define SPI_PIN_SCK               25
+#define SPI_PIN_CS                27
+#define SPI_PIN_RESET             2
+
+// LED TX status (RGB WS2812)
+#define LED_TX_STATUS             22
+
+// RF
+#define MISC_FAN_EN               4
+#define POWER_RX_EN               10
+#define POWER_TX_EN               14
+#define POWER_APC                 26
+#endif
+
 // Data Rate
 #define DR0_SF12_BW125Hz          0
 #define DR1_SF11_BW125Hz          1
@@ -33,7 +54,7 @@ extern "C" {
 #define DR5_SF7_BW125Hz           5
 
 // TX power
-#define TX_POWER_VALUE            12
+#define TX_POWER_VALUE            16
 
 // Lora TDOA commands
 #define CMD_TDOA_BEACON           0x10

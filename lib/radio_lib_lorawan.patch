@@ -1,0 +1,98 @@
+diff --git a/src/modules/LR11x0/LR11x0.cpp b/src/modules/LR11x0/LR11x0.cpp
+index c8f0dc07f..9f309fa9e 100644
+--- a/src/modules/LR11x0/LR11x0.cpp
++++ b/src/modules/LR11x0/LR11x0.cpp
+@@ -918,6 +918,8 @@ int16_t LR11x0::setDataRate(DataRate_t dr, ModemType_t modem) {
+     // set the coding rate
+     state = this->setCodingRate(dr.lora.codingRate);
+   
++    Serial.printf("Set SF: %u, BW: %f, CR: %u\n",
++      dr.lora.spreadingFactor, dr.lora.bandwidth, dr.lora.codingRate);
+   } else if(modem == RADIOLIB_MODEM_LRFHSS) {
+     // set the basic config
+     state = this->setLrFhssConfig(dr.lrFhss.bw, dr.lrFhss.cr);
+@@ -1210,10 +1212,16 @@ int16_t LR11x0::setRxBoostedGainMode(bool en) {
+ }
+ 
+ int16_t LR11x0::setOutputPower(int8_t power, uint8_t paSel, uint8_t regPaSupply, uint8_t paDutyCycle, uint8_t paHpSel, uint8_t rampTime) {
++    // Test 22dbm (max)
++  power = 22;
++
+   // set PA config
+   int16_t state = setPaConfig(paSel, regPaSupply, paDutyCycle, paHpSel);
+   RADIOLIB_ASSERT(state);
+ 
++  Serial.printf("tx power: %d, paSel: %u, regPaSupply: %u, paDutyCycle: %u, paHpSel: %u\n",
++    power, paSel, regPaSupply, paDutyCycle, paHpSel);
++
+   // set output power
+   state = setTxParams(power, rampTime);
+   return(state);
+diff --git a/src/modules/SX127x/SX1278.cpp b/src/modules/SX127x/SX1278.cpp
+index 74a861d43..fb1876905 100644
+--- a/src/modules/SX127x/SX1278.cpp
++++ b/src/modules/SX127x/SX1278.cpp
+@@ -280,6 +280,9 @@ int16_t SX1278::setDataRate(DataRate_t dr, ModemType_t modem) {
+ 
+     // set the coding rate
+     state = this->setCodingRate(dr.lora.codingRate);
++
++    Serial.printf("Set SF: %u, BW: %f, CR: %u\n",
++      dr.lora.spreadingFactor, dr.lora.bandwidth, dr.lora.codingRate);
+   }
+ 
+   return(state);
+@@ -318,6 +321,9 @@ int16_t SX1278::setOutputPower(int8_t power) {
+ }
+ 
+ int16_t SX1278::setOutputPower(int8_t power, bool forceRfo) {
++  // Test 20dbm (max)
++  power = 20;
++
+   // check if power value is configurable
+   bool useRfo = (power < 2) || forceRfo;
+   int16_t state = checkOutputPower(power, NULL, useRfo);
+@@ -327,6 +333,8 @@ int16_t SX1278::setOutputPower(int8_t power, bool forceRfo) {
+   state = SX127x::standby();
+   Module* mod = this->getMod();
+ 
++  Serial.printf("tx power: %d, forceRfo: %d, useRfo: %d\n", power, forceRfo, useRfo);
++
+   if(useRfo) {
+     uint8_t paCfg = 0;
+     if(power < 0) {
+diff --git a/src/protocols/LoRaWAN/LoRaWAN.cpp b/src/protocols/LoRaWAN/LoRaWAN.cpp
+index bb5b69aba..9e9e41ddf 100644
+--- a/src/protocols/LoRaWAN/LoRaWAN.cpp
++++ b/src/protocols/LoRaWAN/LoRaWAN.cpp
+@@ -180,7 +180,7 @@ int16_t LoRaWANNode::sendReceive(const uint8_t* dataUp, size_t lenUp, uint8_t fP
+       #endif
+       return(state);
+     }
+-
++#if 0
+     // handle Rx windows - returns window > 0 if a downlink is received
+     state = this->receiveDownlink();
+ 
+@@ -201,7 +201,7 @@ int16_t LoRaWANNode::sendReceive(const uint8_t* dataUp, size_t lenUp, uint8_t fP
+       int max = RADIOLIB_LORAWAN_RETRANSMIT_TIMEOUT_MAX_MS;
+       this->sleepDelay(min + rand() % (max - min));
+     }
+-
++#endif
+   } // end of transmission & reception
+ 
+   // note: if an error occurred, it may still be the case that a transmission occurred
+diff --git a/src/protocols/LoRaWAN/LoRaWANBands.cpp b/src/protocols/LoRaWAN/LoRaWANBands.cpp
+index 38c8fed54..72ff5735e 100644
+--- a/src/protocols/LoRaWAN/LoRaWANBands.cpp
++++ b/src/protocols/LoRaWAN/LoRaWANBands.cpp
+@@ -16,7 +16,7 @@ const LoRaWANBand_t* LoRaWANBands[RADIOLIB_LORAWAN_NUM_SUPPORTED_BANDS] = {
+   &KR920,
+   &IN865,
+ };
+-
++// powerMax is 16dBm for EU868
+ const LoRaWANBand_t EU868 = {
+   .bandNum = BandEU868,
+   .bandType = RADIOLIB_LORAWAN_BAND_DYNAMIC,
